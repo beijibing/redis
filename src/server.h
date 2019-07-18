@@ -159,6 +159,8 @@ typedef long long mstime_t; /* millisecond time type. */
 #define CONFIG_MIN_RESERVED_FDS 32
 #define CONFIG_DEFAULT_LATENCY_MONITOR_THRESHOLD 0
 #define CONFIG_DEFAULT_SLAVE_LAZY_FLUSH 0
+#define CONFIG_DEFAULT_ACTIVE_EXPIRE_ENABLE 1
+#define CONFIG_DEFAULT_PASSIVE_EXPIRE_ENABLE 1
 #define CONFIG_DEFAULT_LAZYFREE_LAZY_EVICTION 0
 #define CONFIG_DEFAULT_LAZYFREE_LAZY_EXPIRE 0
 #define CONFIG_DEFAULT_LAZYFREE_LAZY_SERVER_DEL 0
@@ -1151,6 +1153,7 @@ struct redisServer {
     int maxidletime;                /* Client timeout in seconds */
     int tcpkeepalive;               /* Set SO_KEEPALIVE if non-zero. */
     int active_expire_enabled;      /* Can be disabled for testing purposes. */
+    int passive_expire_enabled;     /* Can be disabled for testing purposes. */
     int active_defrag_enabled;
     size_t active_defrag_ignore_bytes; /* minimum amount of fragmentation waste to start active defrag */
     int active_defrag_threshold_lower; /* minimum percentage of fragmentation to start active defrag */

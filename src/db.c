@@ -1196,6 +1196,8 @@ int keyIsExpired(redisDb *db, robj *key) {
  * The return value of the function is 0 if the key is still valid,
  * otherwise the function returns 1 if the key is expired. */
 int expireIfNeeded(redisDb *db, robj *key) {
+    if (!server.passive_expire_enabled) return 0;
+
     if (!keyIsExpired(db,key)) return 0;
 
     /* If we are running in the context of a slave, instead of

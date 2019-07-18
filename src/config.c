@@ -105,7 +105,7 @@ clientBufferLimitsConfig clientBufferLimitsDefaults[CLIENT_TYPE_OBUF_COUNT] = {
     {1024*1024*32, 1024*1024*8, 60}  /* pubsub */
 };
 
-/* Configuration values that require no special handling to set, get, load or 
+/* Configuration values that require no special handling to set, get, load or
  * rewrite. */
 typedef struct configYesNo {
     const char *name; /* The user visible name of this config */
@@ -127,6 +127,8 @@ configYesNo configs_yesno[] = {
     {"activerehashing",NULL,&server.activerehashing,1,CONFIG_DEFAULT_ACTIVE_REHASHING},
     {"stop-writes-on-bgsave-error",NULL,&server.stop_writes_on_bgsave_err,1,CONFIG_DEFAULT_STOP_WRITES_ON_BGSAVE_ERROR},
     {"dynamic-hz",NULL,&server.dynamic_hz,1,CONFIG_DEFAULT_DYNAMIC_HZ},
+    {"active-expire-enabled",NULL,&server.active_expire_enabled,1,CONFIG_DEFAULT_ACTIVE_EXPIRE_ENABLE},
+    {"passive-expire-enabled",NULL,&server.passive_expire_enabled,1,CONFIG_DEFAULT_PASSIVE_EXPIRE_ENABLE},
     {"lazyfree-lazy-eviction",NULL,&server.lazyfree_lazy_eviction,1,CONFIG_DEFAULT_LAZYFREE_LAZY_EVICTION},
     {"lazyfree-lazy-expire",NULL,&server.lazyfree_lazy_expire,1,CONFIG_DEFAULT_LAZYFREE_LAZY_EXPIRE},
     {"lazyfree-lazy-server-del",NULL,&server.lazyfree_lazy_server_del,1,CONFIG_DEFAULT_LAZYFREE_LAZY_SERVER_DEL},
@@ -255,7 +257,7 @@ void loadServerConfigFromString(char *config) {
         for (configYesNo *config = configs_yesno; config->name != NULL; config++) {
             if ((!strcasecmp(argv[0],config->name) ||
                 (config->alias && !strcasecmp(argv[0],config->alias))) &&
-                (argc == 2)) 
+                (argc == 2))
             {
                 if ((*(config->config) = yesnotoi(argv[1])) == -1) {
                     err = "argument must be 'yes' or 'no'"; goto loaderr;
@@ -891,7 +893,7 @@ void configSetCommand(client *c) {
     /* Iterate the configs that are standard */
     for (configYesNo *config = configs_yesno; config->name != NULL; config++) {
         if(config->modifiable && (!strcasecmp(c->argv[2]->ptr,config->name) ||
-            (config->alias && !strcasecmp(c->argv[2]->ptr,config->alias))))  
+            (config->alias && !strcasecmp(c->argv[2]->ptr,config->alias))))
         {
             int yn = yesnotoi(o->ptr);
             if (yn == -1) goto badfmt;
